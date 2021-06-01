@@ -4,23 +4,29 @@ const weather = document.querySelector('.js-weather'),
 
 const COORDS_LS = 'coords'
 
+function paintWeatherError(err) {
+    weather.textContent = `WeatherError : ${err.message}`;
+}
+
 function paintWeather(tempData,placeData) {
     temperature.textContent = `${tempData}°C`;
     place.textContent = placeData
 }
 
 function getWeather(lat,lon) {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${config.API_KEY}&units=metric`)
-    .then(response => response.json())
-    .then(json=> {
-        const tempData = json.main.temp.toFixed(1);
-        const placeData = json.name;
-
-        paintWeather(tempData,placeData);
-    })
-    .catch(err=>{
-        paintWeather(err.name,err.message)
-    })
+    try{
+        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${config.API_KEY}&units=metric`)
+        .then(response => response.json())
+        .then(json=> {
+            const tempData = json.main.temp.toFixed(1);
+            const placeData = json.name;
+            
+            paintWeather(tempData,placeData);
+        })
+    }
+    catch(err) {
+        paintWeatherError(err);
+    }
 }
 
 function saveCoords(coordsObj) {
